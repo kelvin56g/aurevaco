@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Details</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            text-align: center;
+        }
+        .container {
+            width: 80%;
+            margin: auto;
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        img {
+            max-width: 300px;
+            border-radius: 5px;
+        }
+        .price {
+            font-size: 24px;
+            color: #ff6700;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1 id="product-name"></h1>
+        <img id="product-image" src="" alt="Product Image">
+        <p id="product-description"></p>
+        <p class="price" id="product-price"></p>
+        <button onclick="goBack()">Go Back</button>
+    </div>
+
+    <script>
+      function addProduct ()n{
+        const name = document.getElementById ("productsName").value;
+        const description = document.getElementById ("productsDescription").value;
+        const Price = document.getElementById ("productsPrice").value;
+        const imageInput = document.getElementById ("productImage").value;
+        if(!name || !description || !Price || !imageInput.files[0]) {
+            return;
+        }
+        const reader = new FileReader();
+        reader.onload = function (e) {
+            const newProduct = {
+                name, 
+                description,
+                Price,
+                image: e.target.result
+            };
+            const products = JSON.parse(localStorage.getItem("products"))
+            products.push(newProduct);
+            localStorage.setItem("products", JSON.stringify(products))
+            loadProducts();
+        };
+        reader.readAsDataURL(imageInput.files[0]);
+        document.getElementById("productName").value = "";
+        document.getElementById("productDescription").value = "";
+        document.getElementById("productPrice").value = "";
+        document.getElementById("productImage").value = "";
+
+
+
+      }
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - Orders</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 80%;
+            max-width: 700px;
+            margin-top: 20px;
+        }
+        h2 {
+            text-align: center;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+        }
+        th {
+            background: #ff6700;
+            color: white;
+        }
+        .navbar {
+            width: 100%;
+            background: #333;
+            padding: 10px;
+            text-align: center;
+        }
+        .navbar a {
+            color: white;
+            text-decoration: none;
+            margin: 0 15px;
+        }
+        .navbar a:hover {
+            text-decoration: underline;
+        }
+        .accept-btn, .paid-btn {
+            padding: 5px 10px;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        .accept-btn {
+            background-color: red;
+        }
+        .accepted {
+            background-color: green !important;
+        }
+        .paid-btn {
+            background-color: gray;
+            margin-left: 5px;
+        }
+        .paid {
+            background-color: blue !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <a href="products.html">Products</a>
+        <a href="admin.html">Orders</a>
+    </div>
+    
+    <div class="container">
+        <h2>Order List</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Address</th>
+                    <th>City</th>
+                    <th>State</th>
+                    <th>ZIP</th>
+                    <th>Payment</th>
+                    <th>Notes</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="orderTableBody">
+            </tbody>
+        </table>
+    </div>
+    
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            let orders = JSON.parse(localStorage.getItem("orders")) || [];
+            let statusData = JSON.parse(localStorage.getItem("orderStatus")) || {};
+
+            let tableBody = document.getElementById("orderTableBody");
+
+            orders.forEach((order, index) => {
+                let row = document.createElement("tr");
+                row.innerHTML = `
+                    <td>${order.name}</td>
+                    <td>${order.address}</td>
+                    <td>${order.city}</td>
+                    <td>${order.state}</td>
+                    <td>${order.zip}</td>
+                    <td>BDT ${order.payment}</td>
+                    <td>${order.description}</td>
+                    <td>
+                        <button class="accept-btn" onclick="acceptOrder(${index})">Accept</button>
+                        <button class="paid-btn" onclick="markPaid(${index})">Paid</button>
+                    </td>
+                `;
+                tableBody.appendChild(row);
+
+                let acceptBtn = row.querySelector(".accept-btn");
+                let paidBtn = row.querySelector(".paid-btn");
+
+                if (statusData[index]?.accepted) {
+                    acceptBtn.classList.add("accepted");
+                    acceptBtn.innerText = "Accepted";
+                    acceptBtn.disabled = true;
+                }
+
+                if (statusData[index]?.paid) {
+                    paidBtn.classList.add("paid");
+                    paidBtn.innerText = "Paid";
+                    paidBtn.disabled = true;
+                }
+            });
+        });
+
+        function acceptOrder(index) {
+            let statusData = JSON.parse(localStorage.getItem("orderStatus")) || {};
+            statusData[index] = statusData[index] || {};
+            statusData[index].accepted = true;
+            localStorage.setItem("orderStatus", JSON.stringify(statusData));
+
+            let button = document.querySelectorAll(".accept-btn")[index];
+            button.classList.add("accepted");
+            button.innerText = "Accepted";
+            button.disabled = true;
+        }
+
+        function markPaid(index) {
+            let statusData = JSON.parse(localStorage.getItem("orderStatus")) || {};
+            statusData[index] = statusData[index] || {};
+            statusData[index].paid = true;
+            localStorage.setItem("orderStatus", JSON.stringify(statusData));
+
+            let button = document.querySelectorAll(".paid-btn")[index];
+            button.classList.add("paid");
+            button.innerText = "Paid";
+            button.disabled = true;
+        }
+    </script>
+</body>
+</html>

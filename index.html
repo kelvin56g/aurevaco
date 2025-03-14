@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aureva CO.</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        /* Navbar Styling */
+        .navbar {
+            background: #ff6700;
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .navbar h1 {
+            color: white;
+            margin: 0;
+            font-size: 24px;
+        }
+        .navbar a {
+            color: white;
+            text-decoration: none;
+            margin: 0 10px;
+            font-size: 18px;
+        }
+        .container {
+            width: 80%;
+            margin: auto;
+            padding: 20px;
+        }
+        h2 {
+            text-align: center;
+            color: #ff6700;
+        }
+        .product {
+            display: flex;
+            align-items: center;
+            background: white;
+            margin: 15px 0;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .product img {
+            width: 100px;
+            height: 100px;
+            margin-right: 20px;
+            border-radius: 5px;
+        }
+        .product-info {
+            flex-grow: 1;
+        }
+        .btn {
+            background: #ff6700;
+            color: white;
+            padding: 10px;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            margin: 5px;
+        }
+        .btn:hover {
+            background: #e65c00;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navigation Bar -->
+    <div class="navbar">
+        <h1>Aureva CO.</h1>
+        <div>
+            <a href="index.html">Home</a>
+            <a href="cart.html">Cart</a>
+            <a href="admin.html">Admin Panel</a>
+        </div>
+    </div>
+
+    <div class="container">
+        <h2>Welcome to Our Store</h2>
+        <div id="product-list"></div>
+    </div>
+
+    <script>
+        // লোকাল স্টোরেজ থেকে প্রোডাক্ট লোড
+        function loadProducts() {
+            let products = JSON.parse(localStorage.getItem('products')) || [];
+            let productList = document.getElementById('product-list');
+            productList.innerHTML = ''; // আগের লিস্ট ক্লিয়ার
+            products.forEach((product, index) => {
+                let productItem = document.createElement('div');
+                productItem.classList.add('product');
+                productItem.innerHTML = `
+                    <img src="${product.image}" alt="${product.name}">
+                    <div class="product-info">
+                        <h3>${product.name}</h3>
+                        <p>${product.description}</p>
+                        <strong>$${product.price}</strong>
+                    </div>
+                    <button class="btn" onclick="addToCart(${index})">Add to Cart</button>
+                    <button class="btn" onclick="buyNow(${index})">Buy Now</button>
+                `;
+                productList.appendChild(productItem);
+            });
+        }
+
+        // কার্টে যোগ করা
+        function addToCart(index) {
+            let products = JSON.parse(localStorage.getItem('products')) || [];
+            let cart = JSON.parse(localStorage.getItem('cart')) || [];
+            cart.push(products[index]);
+            localStorage.setItem('cart', JSON.stringify(cart));
+            alert('Product added to cart!');
+        }
+
+        // Buy Now ক্লিক করলে Address Page-এ যাবে
+        function buyNow(index) {
+            localStorage.setItem('selectedProduct', JSON.stringify(index));
+            window.location.href = 'address.html';
+        }
+
+        // পেজ লোড হলে প্রোডাক্ট দেখাবে
+        window.onload = loadProducts;
+    </script>
+
+</body>
+</html>

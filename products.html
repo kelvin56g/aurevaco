@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Products</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #f4f4f4; padding: 20px; }
+        .container { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); }
+        input, textarea, button { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ddd; border-radius: 5px; }
+        button { background: #ff6700; color: white; border: none; cursor: pointer; }
+        img { max-width: 100px; margin-top: 10px; }
+        .product-list { margin-top: 20px; }
+        .product-item { border-bottom: 1px solid #ddd; padding: 10px 0; }
+        .delete-btn { background: red; color: white; padding: 5px; cursor: pointer; border: none; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>Add New Product</h2>
+        <input type="text" id="productName" placeholder="Product Name" required>
+        <textarea id="productDescription" placeholder="Product Description" required></textarea>
+        <input type="number" id="productPrice" placeholder="Price ($)" required>
+        <input type="file" id="productImage" accept="image/*">
+        <button onclick="addProduct()">Add Product</button>
+    </div>
+
+    <div class="container">
+        <h2>Product List</h2>
+        <div id="productList" class="product-list"></div>
+    </div>
+
+    <script>
+        function loadProducts() {
+            const products = JSON.parse(localStorage.getItem("products")) || [];
+            const productList = document.getElementById("productList");
+            productList.innerHTML = "";
+
+            products.forEach((product, index) => {
+                const productItem = document.createElement("div");
+                productItem.classList.add("product-item");
+                productItem.innerHTML = `
+                    <img src="${product.image}" alt="Product Image">
+                    <h3>${product.name}</h3>
+                    <p>${product.description}</p>
+                    <p><strong>Price:</strong> $${product.price}</p>
+                    <button class="delete-btn" onclick="deleteProduct(${index})">Delete</button>
+                `;
+                productList.appendChild(productItem);
+            });
+        }
+
+        function addProduct() {
+            const name = document.getElementById("productName").value;
+            const description = document.getElementById("productDescription").value;
+            const price = document.getElementById("productPrice").value;
+            const imageInput = document.getElementById("productImage");
+
+            if (!name || !description || !price || !imageInput.files[0]) {
+                alert("❌ Please fill all fields!");
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                const newProduct = {
+                    name,
+                    description,
+                    price,
+                    image: e.target.result
+                };
+
+                const products = JSON.parse(localStorage.getItem("products")) || [];
+                products.push(newProduct);
+                localStorage.setItem("products", JSON.stringify(products));
+
+                loadProducts();
+            };
+            reader.readAsDataURL(imageInput.files[0]);
+
+            document.getElementById("productName").value = "";
+            document.getElementById("productDescription").value = "";
+            document.getElementById("productPrice").value = "";
+            document.getElementById("productImage").value = "";
+        }
+
+        function deleteProduct(index) {
+            const products = JSON.parse(localStorage.getItem("products")) || [];
+            products.splice(index, 1);
+            localStorage.setItem("products", JSON.stringify(products));
+            loadProducts();
+        }
+
+        window.onload = loadProducts;
+    </script>
+
+</body>
+</html>

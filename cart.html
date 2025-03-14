@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shopping Cart</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        /* Navbar */
+        .navbar {
+            background: #ff6700;
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .navbar h1 {
+            color: white;
+            margin: 0;
+            font-size: 24px;
+        }
+        .navbar a {
+            color: white;
+            text-decoration: none;
+            margin: 0 10px;
+            font-size: 18px;
+        }
+        .container {
+            width: 80%;
+            margin: auto;
+            padding: 20px;
+        }
+        h2 {
+            text-align: center;
+            color: #ff6700;
+        }
+        .cart-item {
+            display: flex;
+            align-items: center;
+            background: white;
+            margin: 15px 0;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .cart-item img {
+            width: 80px;
+            height: 80px;
+            margin-right: 20px;
+            border-radius: 5px;
+        }
+        .cart-info {
+            flex-grow: 1;
+        }
+        .btn {
+            background: #ff6700;
+            color: white;
+            padding: 10px;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            margin: 5px;
+        }
+        .btn:hover {
+            background: #e65c00;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navbar -->
+    <div class="navbar">
+        <h1>My Store</h1>
+        <div>
+            <a href="index.html">Home</a>
+            <a href="cart.html">Cart</a>
+            <a href="admin.html">Admin Panel</a>
+        </div>
+    </div>
+
+    <div class="container">
+        <h2>Your Shopping Cart</h2>
+        <div id="cart-list"></div>
+        <button class="btn" onclick="checkout()">Proceed to Checkout</button>
+    </div>
+
+    <script>
+        function loadCart() {
+            let cart = JSON.parse(localStorage.getItem('cart')) || [];
+            let cartList = document.getElementById('cart-list');
+            cartList.innerHTML = '';
+
+            if (cart.length === 0) {
+                cartList.innerHTML = '<p>Your cart is empty.</p>';
+                return;
+            }
+
+            cart.forEach((item, index) => {
+                let cartItem = document.createElement('div');
+                cartItem.classList.add('cart-item');
+                cartItem.innerHTML = `
+                    <img src="${item.image}" alt="${item.name}">
+                    <div class="cart-info">
+                        <h3>${item.name}</h3>
+                        <p>${item.description}</p>
+                        <strong>$${item.price}</strong>
+                    </div>
+                    <button class="btn" onclick="removeFromCart(${index})">Remove</button>
+                `;
+                cartList.appendChild(cartItem);
+            });
+        }
+
+        function removeFromCart(index) {
+            let cart = JSON.parse(localStorage.getItem('cart')) || [];
+            cart.splice(index, 1);
+            localStorage.setItem('cart', JSON.stringify(cart));
+            loadCart();
+        }
+
+        function checkout() {
+            if (JSON.parse(localStorage.getItem('cart')).length > 0) {
+                window.location.href = 'address.html';
+            } else {
+                alert("Your cart is empty!");
+            }
+        }
+
+        window.onload = loadCart;
+    </script>
+    <script>
+        function checkout() {
+    let cart = JSON.parse(localStorage.getItem('cart')) || [];
+    if (cart.length > 0) {
+        window.location.href = 'address.html';
+    } else {
+        alert("Your cart is empty!");
+    }
+}
+    </script>
+</body>
+</html>
